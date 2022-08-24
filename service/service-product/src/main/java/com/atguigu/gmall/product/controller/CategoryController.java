@@ -39,33 +39,28 @@ public class CategoryController {
         List<BaseCategory1> list = baseCategory1Service.list();
         return Result.ok(list);
     }
-    //http://192.168.200.1/admin/product/getCategory2/8
+
 
     /**
-     *
+     *根据一级分类id获取所有的二级分类
      * @param c1Id
-     * @return
      */
+    //http://192.168.200.1/admin/product/getCategory2/8
     @GetMapping("/getCategory2/{c1Id}")
     public Result getCategory2(@PathVariable("c1Id") Long c1Id){
         List<BaseCategory2> category2s = baseCategory2Service.getCategory1Child(c1Id);
         return Result.ok(category2s);
     }
+
+    /**
+     * 根据二级分类id获取所有的三级分类
+     * @param c2Id
+     */
     // http://192.168.200.1/admin/product/getCategory3/17
     @GetMapping("/getCategory3/{c2Id}")
     public Result getCategory3(@PathVariable("c2Id") Long c2Id){
        List<BaseCategory3> category3s = baseCategory3Service.getCategory2Child(c2Id);
        return Result.ok(category3s);
     }
-
-    //http://192.168.200.1/admin/product/saveAttrInfo
-
-
-    //http://192.168.200.1/admin/product/attrInfoList/3/0/0
-
-   /* @GetMapping("/attrInfoList/{category1Id}/{category2Id}/{category3Id}")
-    public Result attrInfoList(){
-
-    }*/
 
 }

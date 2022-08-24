@@ -1,13 +1,21 @@
 package com.atguigu.gmall.product.controller;
 
 import com.atguigu.gmall.common.result.Result;
-import com.baomidou.mybatisplus.extension.api.R;
+import io.minio.BucketExistsArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.errors.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**文件上传
  * @program: gmall-parent
@@ -17,15 +25,42 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/product")
 public class FileuploadController {
+
+    @Value("${minio.endpointUrl}")    //  获取文件上传对应的地址
+    public String endpointUrl;
+
+    @Value("${minio.accessKey}")
+    public String accessKey;
+
+    @Value("${minio.secreKey}")
+    public String secreKey;
+
+    @Value("${minio.bucketName}")
+    public String bucketName;
     /**
      * 文件上传到Minio
      * @param file
      */
     //http://192.168.200.1/admin/product/fileUpload
     @PostMapping("/fileUpload")
-    public Result fileUpload(@RequestPart("file")MultipartFile file){
+    public Result fileUpload(@RequestPart("file")MultipartFile file) throws Exception {
         //TODO 文件上传 怎么上传到Minio?
-        return Result.ok();
+        String url = "";
+        MinioClient minioClient = MinioClient.builder()
+                .endpoint(endpointUrl)
+                .credentials(accessKey,secreKey)
+                .build();
+        boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        if(isExist){
+            System.out.println("Bucket already exists.");
+        }else {
+            minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        }
+        String fileName = System.currentTimeMillis()+ UUID.randomUUID().toString();
+        minioClient.putObject(PutObjectArgs.builder().bucket(bucketName).object(fileName).stream(file.getInputStream(),file.getSize(),-1)
+                .contentType(file.getContentType()).build());
+        url = endpointUrl+"/"+bucketName+"/"+fileName;
+        return Result.ok(url);
     }
 
     /**
