@@ -15,4 +15,33 @@
         id,attr_name,category_id,
         category_level
     </sql>
+
+        <!--     数据库查出的每一条记录，new BaseAttrInfo()。然后把数据放到这个对象中。把这个集合返回-->
+    <resultMap id="AttrInfoAndValue"
+               type="com.atguigu.gmall.model.product.BaseAttrInfo"
+               autoMapping="true">
+        <!--        用id标签区分出唯一id-->
+        <id column="id" property="id"></id>
+        <!--        <result column="attr_name" property="attrName"></result>-->
+        <!--        <result column="category_id" property="categoryId"></result>-->
+        <!--        <result column="category_level" property="categoryLevel"></result>-->
+        <collection
+                property="attrValueList"
+                ofType="com.atguigu.gmall.model.product.BaseAttrValue"
+                autoMapping="true">
+            <!--  autoMapping: 数据库的列和JavaBean属性一一对应符合驼峰命名规则          -->
+            <id column="vid" property="id"></id>
+            <!--            <result column="value_name" property="valueName"></result>-->
+            <!--            <result column="attr_id" property="attrId"></result>-->
+        </collection>
+    </resultMap>
+    <select id="getAttrInfoAndValueByCategoryId" resultMap="AttrInfoAndValue">
+        select bai.*,bav.id vid,bav.value_name,bav.attr_id
+        from base_attr_info bai
+                     left join base_attr_value bav on bai.id = bav.attr_id
+        where
+                (bai.category_id=#{category1Id} and bai.category_level=1)
+           or (bai.category_id=#{category2Id} and bai.category_level=2)
+           or (bai.category_id=#{category3Id} and bai.category_level=3)
+    </select>
 </mapper>
