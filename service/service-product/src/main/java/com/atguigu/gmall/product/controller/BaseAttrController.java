@@ -42,7 +42,6 @@ public class BaseAttrController {
     /**
      * 属性的新增
      * @param info
-     * @return
      */
     //http://192.168.200.1/admin/product/saveAttrInfo
     @PostMapping("saveAttrInfo")
@@ -50,6 +49,11 @@ public class BaseAttrController {
         baseAttrInfoService.saveAttrInfo(info);
         return Result.ok();
     }
+
+    /**
+     * 根据平台属性id查询平台属性的对象数据
+     * @param attrId
+     */
     //http://192.168.200.1/admin/product/getAttrValueList/1
     @GetMapping("/getAttrValueList/{attrId}")
     public Result getAttrValueList(@PathVariable("attrId") Long attrId){
