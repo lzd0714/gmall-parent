@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /** 品牌API
  * @program: gmall-parent
  * @author: LZD
@@ -76,6 +78,16 @@ public class BaseTrademarkController {
     public Result removeBaseTrademark(@PathVariable("tid") Long tid){
         baseTrademarkService.removeById(tid);
         return Result.ok();
+    }
+
+    /**
+     * 获取所有品牌
+     */
+    // http://192.168.200.1/admin/product/baseTrademark/getTrademarkList
+    @GetMapping("/baseTrademark/getTrademarkList")
+    public Result getTrademarkList(){
+        List<BaseTrademark> list = baseTrademarkService.list();
+        return Result.ok(list);
     }
 
 }
