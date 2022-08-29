@@ -1,6 +1,7 @@
 package com.atguigu.gmall.product.service.impl;
 
 import com.atguigu.gmall.model.product.BaseCategory3;
+import com.atguigu.gmall.model.to.CategoryViewTo;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,6 +27,12 @@ public class BaseCategory3ServiceImpl extends ServiceImpl<BaseCategory3Mapper, B
         warpper.eq("category2_id",c2Id);
         List<BaseCategory3> list = baseCategory3Mapper.selectList(warpper);
         return list;
+    }
+
+    @Override
+    public CategoryViewTo getCategoryView(Long category3Id) {
+        CategoryViewTo categoryViewTo = baseCategory3Mapper.getCategoryView(category3Id);
+        return categoryViewTo;
     }
 }
 
