@@ -32,7 +32,7 @@
             </collection>
         </collection>
     </resultMap>
-
+<!--TODO:优化SQL-->
 <select id="getAllCategoryWithTree" resultMap="CategoryTreeRM">
     select bc1.*,
            bc2.id   c2_id,

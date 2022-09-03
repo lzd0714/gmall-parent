@@ -48,13 +48,13 @@ public class SpuController {
     }
 
     /**
-     * 保存spu信息
+     * 大保存spu信息
      * @param spuInfo
      */
     //http://192.168.200.1/admin/product/saveSpuInfo
     @PostMapping("/saveSpuInfo")
     public Result saveSpuInfo(@RequestBody SpuInfo spuInfo){
-        spuInfoService.save(spuInfo);
+        spuInfoService.saveSpuInfo(spuInfo);
         return Result.ok();
     }
 

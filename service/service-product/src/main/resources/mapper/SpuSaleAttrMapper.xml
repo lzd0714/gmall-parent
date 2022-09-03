@@ -50,7 +50,7 @@
                      left join sku_sale_attr_value skuv
                 on ssav.id = skuv.sale_attr_value_id and skuv.sku_id=#{skuId}
         where ssa.spu_id=#{spuId}
-        order by by ssa.base_sale_attr_id,ssav.id
+        order by  ssa.base_sale_attr_id,ssav.id
     </select>
 
     <select id="getAllSkuValueJson" resultType="com.atguigu.gmall.model.to.ValueSkuJsonTo">

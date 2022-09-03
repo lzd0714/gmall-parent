@@ -17,8 +17,6 @@ import java.util.List;
 @FeignClient("service-product")
 public interface CategoryFeignClient {
 
-//    @GetMapping("/api/inner/rpc/product/category/tree")
-//    Result<List<CategoryTreeTo>> getCategoryTree();
     @GetMapping("/category/tree")
     Result<List<CategoryTreeTo>> getAllCategoryWithTree();
 }

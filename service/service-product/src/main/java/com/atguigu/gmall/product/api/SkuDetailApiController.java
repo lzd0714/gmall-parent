@@ -104,7 +104,7 @@ public class SkuDetailApiController {
 
     /**
      * 查分类
-     * @param c3Id
+     * @param category3Id
      * @return
      */
     @GetMapping("/skudetail/categoryview/{category3Id}")
