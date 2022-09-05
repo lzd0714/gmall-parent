@@ -1,4 +1,4 @@
-package com.atguigu.gmall.item.feign;
+package com.atguigu.gmall.feign.product;
 
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.SkuImage;
@@ -16,14 +16,18 @@ import java.util.List;
 /**
  * @program: gmall-parent
  * @author: LZD
- * @create: 2022-08-29 17:21
+ * @create: 2022-09-05 15:02
  **/
 @RequestMapping("/api/inner/rpc/product")
 @FeignClient("service-product")
-public interface SkuDetailFeignClient {
+public interface SkuProductFeignClient {
+    //    @GetMapping("/skudetail/{skuId}")  //不要用这个超级接口
+//    Result<SkuDetailTo> getSkuDetail(@PathVariable("skuId") Long skuId);
+
     /**
      * 查询sku的基本信息
      * @param skuId
+     * @return
      */
     @GetMapping("/skudetail/info/{skuId}")
     Result<SkuInfo> getSkuInfo(@PathVariable("skuId") Long skuId);
@@ -32,6 +36,7 @@ public interface SkuDetailFeignClient {
     /**
      * 查询sku的图片信息
      * @param skuId
+     * @return
      */
     @GetMapping("/skudetail/images/{skuId}")
     Result<List<SkuImage>> getSkuImages(@PathVariable("skuId")Long skuId);
@@ -40,6 +45,7 @@ public interface SkuDetailFeignClient {
     /**
      * 查询sku的实时价格
      * @param skuId
+     * @return
      */
     @GetMapping("/skudetail/price/{skuId}")
     Result<BigDecimal> getSku1010Price(@PathVariable("skuId")Long skuId);
@@ -48,6 +54,7 @@ public interface SkuDetailFeignClient {
      * 查询sku对应的spu定义的所有销售属性名和值。并且标记出当前sku是哪个
      * @param skuId
      * @param spuId
+     * @return
      */
     @GetMapping("/skudetail/saleattrvalues/{skuId}/{spuId}")
     Result<List<SpuSaleAttr>> getSkuSaleattrvalues(@PathVariable("skuId") Long skuId,
@@ -57,6 +64,7 @@ public interface SkuDetailFeignClient {
     /**
      * 查sku组合 valueJson
      * @param spuId
+     * @return
      */
     @GetMapping("/skudetail/valuejson/{spuId}")
     Result<String> getSKuValueJson(@PathVariable("spuId") Long spuId);
@@ -64,8 +72,9 @@ public interface SkuDetailFeignClient {
 
     /**
      * 查分类
-     * @param category3Id
+     * @param c3Id
+     * @return
      */
-    @GetMapping("/skudetail/categoryview/{category3Id}")
-    Result<CategoryViewTo> getCategoryView(@PathVariable("category3Id") Long category3Id);
+    @GetMapping("/skudetail/categoryview/{c3Id}")
+    Result<CategoryViewTo> getCategoryView(@PathVariable("c3Id") Long c3Id);
 }

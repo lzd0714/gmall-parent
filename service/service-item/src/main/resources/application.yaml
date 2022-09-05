@@ -1,15 +1,10 @@
 server:
   port: 8001
 spring:
+  main:
+    allow-bean-definition-overriding: true
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-  redis:
-    host: 192.168.200.100
-    password: lzd123456
-  zipkin:
-    base-url: http://192.168.200.100:9411/
-    sender:
-      type: web
 app:
   thread-pool:
     core: 4
@@ -24,3 +19,10 @@ management:
     web:
       exposure:
         include: "*"
+#feign:
+#  client:
+#    config:
+#      default: #所有@@FeignClient 标注的feign客户端都是用这个配置
+#        connectTimeout: 500
+#        readTimeout: 5000
+#        retryer: com.atguigu.gmall.common.retry.MyRetryer #自定义的feign重试器

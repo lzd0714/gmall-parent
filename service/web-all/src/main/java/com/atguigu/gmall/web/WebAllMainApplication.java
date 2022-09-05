@@ -13,8 +13,12 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author: LZD
  * @create: 2022-08-27 15:33
  **/
+@EnableFeignClients(basePackages = {
+        "com.atguigu.gmall.feign.item",
+        "com.atguigu.gmall.feign.product"
+}) //只会扫描主程序所在的子包
 @SpringCloudApplication
-@EnableFeignClients
+
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 //@EnableDiscoveryClient
 //@EnableCircuitBreaker
