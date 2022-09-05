@@ -18,6 +18,7 @@ public class Goods {
     @Id
     private Long id;
 
+    //index = false；不用索引。
     @Field(type = FieldType.Keyword, index = false)
     private String defaultImg;
 
@@ -30,7 +31,7 @@ public class Goods {
 
     //  @Field(type = FieldType.Date)   6.8.1
     @Field(type = FieldType.Date,format = DateFormat.custom,pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime; // 新品
+    private Date createTime; // 新品 商品的上架时间
 
     @Field(type = FieldType.Long)
     private Long tmId;
@@ -63,7 +64,7 @@ public class Goods {
     @Field(type = FieldType.Long)
     private Long hotScore = 0L;
 
-    // 平台属性集合对象
+    // 平台属性集合对象.只要集合类型内部的对象需要参与检索，就用 Nested映射 + NestedQuery = 正确结果
     // Nested 支持嵌套查询
     @Field(type = FieldType.Nested)
     private List<SearchAttr> attrs;

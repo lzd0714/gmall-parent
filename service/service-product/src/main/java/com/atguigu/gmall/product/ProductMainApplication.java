@@ -6,6 +6,7 @@ import com.atguigu.gmall.common.config.annotation.EnableThreadPool;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -14,6 +15,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author: LZD
  * @create: 2022-08-23 08:29
  **/
+@EnableFeignClients(basePackages = {
+        "com.atguigu.gmall.feign.search"
+})
 @EnableScheduling
 @EnableThreadPool
 @SpringCloudApplication

@@ -206,7 +206,7 @@ public class SkuDetailServiceImpl implements SkuDetailService {
             //2.1、回源。之前可以判断redis中保存的sku的id集合，有没有这个id
             //防止随机值穿透攻击？ 回源之前，先要用布隆/bitmap判断有没有
 //            int result = getbit(49);
-            // TODO 加锁解决击穿
+
             SkuDetailTo fromRpc = null;
             //JVM 抢不到锁的等1s。 怎么判断synchronized 抢到还是没抢到？
 //            ReentrantLock lock = new ReentrantLock();  //锁不住
