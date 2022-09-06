@@ -65,8 +65,6 @@ public class SearchController {
         //9、url信息
         model.addAttribute("urlParam",data.getUrlParam());
 
-
-
         return "list/index";
     }
 }
