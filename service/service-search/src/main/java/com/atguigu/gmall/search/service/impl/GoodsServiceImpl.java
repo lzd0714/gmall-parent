@@ -193,30 +193,41 @@ public class GoodsServiceImpl implements GoodsService {
      */
     private List<AttrVo> buildAttrsList(SearchHits<Goods> goods) {
         List<AttrVo> attrVos = new ArrayList<>();
-
-        //拿到整个属性的聚合
+        //1、拿到整个属性的聚合结果
         ParsedNested attrAgg = goods.getAggregations().get("attrAgg");
-        //拿到属性ID的聚合
+
+
+        //2、拿到属性id的聚合结果
         ParsedLongTerms attrIdAgg = attrAgg.getAggregations().get("attrIdAgg");
+
+        //3、遍历所有属性id
         for (Terms.Bucket bucket : attrIdAgg.getBuckets()) {
             AttrVo attrVo = new AttrVo();
-            //获取属性id
+
+
+            //3.1、属性id
             long attrId = bucket.getKeyAsNumber().longValue();
             attrVo.setAttrId(attrId);
-            //获得属性名
+
+            //3.2、属性名
             ParsedStringTerms attrNameAgg = bucket.getAggregations().get("attrNameAgg");
-            attrVo.setAttrName(attrNameAgg.getBuckets().get(0).getKeyAsString());
-            //获得所有属性值
+            String attrName = attrNameAgg.getBuckets().get(0).getKeyAsString();
+            attrVo.setAttrName(attrName);
+            //3.3、所有属性值
             List<String> attrValues = new ArrayList<>();
             ParsedStringTerms attrValueAgg = bucket.getAggregations().get("attrValueAgg");
             for (Terms.Bucket valueBucket : attrValueAgg.getBuckets()) {
-                 attrValues.add(valueBucket.getKeyAsString());
+                String value = valueBucket.getKeyAsString();
+                attrValues.add(value);
             }
             attrVo.setAttrValueList(attrValues);
+
+
             attrVos.add(attrVo);
         }
 
         return attrVos;
+
     }
 
     /**
@@ -227,26 +238,31 @@ public class GoodsServiceImpl implements GoodsService {
     private List<TrademarkVo> buildTrademarkList(SearchHits<Goods> goods) {
         //StreamAPI
         List<TrademarkVo> trademarkVos = new ArrayList<>();
-        //先拿到tmIdAgg的聚合
+        //拿到 tmIdAgg 聚合
         ParsedLongTerms tmIdAgg = goods.getAggregations().get("tmIdAgg");
-        //取桶里面的每一个品牌元素
+
+        //拿到品牌id桶聚合中的每个数据
         for (Terms.Bucket bucket : tmIdAgg.getBuckets()) {
             TrademarkVo trademarkVo = new TrademarkVo();
 
-            //获取品牌ID
-            long tmId = bucket.getKeyAsNumber().longValue();
+            //1、获取品牌id
+            Long tmId = bucket.getKeyAsNumber().longValue();
             trademarkVo.setTmId(tmId);
-            //获取品牌名
-            ParsedStringTerms tmNameAgg = bucket.getAggregations().get("tmNameAgg");
-            trademarkVo.setTmName(tmNameAgg.getBuckets().get(0).getKeyAsString());
-            //获取品牌logo
-            ParsedStringTerms tmLogoAgg = bucket.getAggregations().get("tmLogoAgg");
-            trademarkVo.setTmLogoUrl(tmLogoAgg.getBuckets().get(0).getKeyAsString());
 
-            //添加到trademarkVos
+            //2、获取品牌名
+            ParsedStringTerms tmNameAgg = bucket.getAggregations().get("tmNameAgg");
+            String tmName = tmNameAgg.getBuckets().get(0).getKeyAsString();
+            trademarkVo.setTmName(tmName);
+
+            //3、获取品牌logo
+            ParsedStringTerms tmLogoAgg = bucket.getAggregations().get("tmLogoAgg");
+            String tmLogo = tmLogoAgg.getBuckets().get(0).getKeyAsString();
+            trademarkVo.setTmLogoUrl(tmLogo);
+
             trademarkVos.add(trademarkVo);
         }
         return trademarkVos;
+
     }
 
     /**
@@ -380,29 +396,12 @@ public class GoodsServiceImpl implements GoodsService {
         //===========模糊查询高亮功能结束=================
         //=========聚合分析上面DSL检索到的所有商品涉及了多少种品牌和多少种平台属性
         //TODO 3.聚合分析有问题
-        //3.1)、品牌的聚合分析
-      /*  TermsAggregationBuilder tmIdAgg = AggregationBuilders.terms("tmIdAgg").field("tmId").size(1000);
+        /*//3.1)、品牌的聚合分析
+        TermsAggregationBuilder tmIdAgg = AggregationBuilders.terms("tmIdAgg").field("tmId").size(1000);
         TermsAggregationBuilder tmNameAgg = AggregationBuilders.terms("tmNameAgg").field("tmName").size(1);
         TermsAggregationBuilder tmLogoAgg = AggregationBuilders.terms("tmLogoAgg").field("tmLogoUrl").size(1);
         tmIdAgg.subAggregation(tmNameAgg);
         tmIdAgg.subAggregation(tmLogoAgg);
-        query.addAggregation(tmIdAgg);*/
-        //3、品牌聚合 - 品牌聚合分析条件
-        TermsAggregationBuilder tmIdAgg = AggregationBuilders
-                .terms("tmIdAgg")
-                .field("tmId")
-                .size(1000);
-
-
-        //3.1 品牌聚合 - 品牌名子聚合
-        TermsAggregationBuilder tmNameAgg = AggregationBuilders.terms("tmNameAgg").field("tmName.keyword").size(1);
-        //3.2 品牌聚合 - 品牌logo子聚合
-        TermsAggregationBuilder tmLogoAgg = AggregationBuilders.terms("tmLogoAgg").field("tmLogoUrl").size(1);
-
-        tmIdAgg.subAggregation(tmNameAgg);
-        tmIdAgg.subAggregation(tmLogoAgg);
-
-        //品牌id聚合条件拼装完成
         query.addAggregation(tmIdAgg);
 
         //3.2)、平台属性的聚合分析
@@ -414,6 +413,46 @@ public class GoodsServiceImpl implements GoodsService {
         attrAgg.subAggregation(attrValueAgg);
         attrAgg.subAggregation(attrNameAgg);
         attrAgg.subAggregation(attrIdAgg);
+        query.addAggregation(attrAgg);*/
+        //3、品牌聚合 - 品牌聚合分析条件
+        TermsAggregationBuilder tmIdAgg = AggregationBuilders
+                .terms("tmIdAgg")
+                .field("tmId")
+                .size(1000);
+
+
+        //3.1 品牌聚合 - 品牌名子聚合
+        TermsAggregationBuilder tmNameAgg = AggregationBuilders.terms("tmNameAgg").field("tmName").size(1);
+        //3.2 品牌聚合 - 品牌logo子聚合
+        TermsAggregationBuilder tmLogoAgg = AggregationBuilders.terms("tmLogoAgg").field("tmLogoUrl").size(1);
+
+        tmIdAgg.subAggregation(tmNameAgg);
+        tmIdAgg.subAggregation(tmLogoAgg);
+
+        //品牌id聚合条件拼装完成
+        query.addAggregation(tmIdAgg);
+
+
+
+        //4、属性聚合
+        //4.1 属性的整个嵌入式聚合
+        NestedAggregationBuilder attrAgg = AggregationBuilders.nested("attrAgg", "attrs");
+
+
+        //4.2 attrid 聚合
+        TermsAggregationBuilder attrIdAgg = AggregationBuilders.terms("attrIdAgg").field("attrs.attrId").size(100);
+
+        //4.3 attrname 聚合
+        TermsAggregationBuilder attrNameAgg = AggregationBuilders.terms("attrNameAgg").field("attrs.attrName").size(1);
+
+        //4.4 attrvalue 聚合
+        TermsAggregationBuilder attrValueAgg = AggregationBuilders.terms("attrValueAgg").field("attrs.attrValue").size(100);
+
+        attrIdAgg.subAggregation(attrNameAgg);
+        attrIdAgg.subAggregation(attrValueAgg);
+        attrAgg.subAggregation(attrIdAgg);
+
+        //添加整个属性的聚合条件
         query.addAggregation(attrAgg);
 
         return query;
