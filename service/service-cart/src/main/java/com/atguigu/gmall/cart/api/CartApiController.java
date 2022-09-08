@@ -17,16 +17,12 @@ public class CartApiController {
      * 将商品添加到购物车
      * @param skuId
      * @param num
-     * @param userId
      * @return
      */
     @GetMapping("/addToCart")
     public Result addToCart(@RequestParam("skuId") Long skuId,
-                            @RequestParam("num") Integer num,
-                            @RequestHeader(value= SysRedisConst.USERID_HEADER,required = false)
-                                        String userId){
+                            @RequestParam("num") Integer num){
         //TODO
-        System.out.println("service-cart 获取到的用户id："+userId);
         return Result.ok();
     }
 }

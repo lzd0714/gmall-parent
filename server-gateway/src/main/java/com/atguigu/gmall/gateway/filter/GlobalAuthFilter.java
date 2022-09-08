@@ -27,6 +27,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import springfox.documentation.spring.web.json.Json;
 
+import javax.annotation.meta.Exhaustive;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -78,7 +79,7 @@ public class GlobalAuthFilter implements GlobalFilter {
                 //4.3 判断用户信息是否正确
                 if(userInfo != null){
                     //redis中有该用户信息，进行id透传
-                    ServerWebExchange webExchange = userIdTransport(userInfo,exchange);
+                    ServerWebExchange webExchange = userIdOrTempIdTransport(userInfo,exchange);
                     return chain.filter(webExchange);
                 }else {
                     //redis中没有该用户[假的令牌，token没有，没登录]
@@ -89,16 +90,15 @@ public class GlobalAuthFilter implements GlobalFilter {
 
         }
 
-        //5.普通请求：如果携带了token就进行id透传，
+        //5.普通请求：如果携带了token就进行id透传，和临时id透传
         String tokenValue = getTokenValue(exchange);
         UserInfo userInfo = getTokenUserInfo(tokenValue);
-        if (userInfo != null){
-            exchange = userIdTransport(userInfo, exchange);
-        }else {
-            if (!StringUtils.isEmpty(tokenValue)){
-                return redirectToCustomPage(urlProperties.getLoginPage()+"?originUrl="+uri,exchange);
-            }
+        if (!StringUtils.isEmpty(tokenValue) && userInfo != null){
+            //假请求直接打回登录页
+            return redirectToCustomPage(urlProperties.getLoginPage()+"?originUrl="+uri,exchange);
         }
+        //token就进行id透传，和临时id透传
+        exchange = userIdOrTempIdTransport(userInfo, exchange);
         //放行
         return chain.filter(exchange);
     }
@@ -122,23 +122,43 @@ public class GlobalAuthFilter implements GlobalFilter {
     }
 
     /**
-     * id 透传
+     * id 透传和临时token透传
      * @param userInfo
      * @param exchange
      * @return
      */
-    private ServerWebExchange userIdTransport(UserInfo userInfo, ServerWebExchange exchange) {
-        if (userInfo != null){
-            //请求一旦发过来，所有的请求数据是固定的，不能进行任何的数据修改，只能能读取
-            ServerHttpRequest newReq = exchange.getRequest()
-                    .mutate()//变成一个新的请求
-                    .header(SysRedisConst.USERID_HEADER, userInfo.getId().toString())
-                    .build();//添加自己的头
-            //放行的时候改掉exchange
-            ServerWebExchange webExchange = exchange.mutate().request(newReq).response(exchange.getResponse()).build();
-            return webExchange;
+    private ServerWebExchange userIdOrTempIdTransport(UserInfo userInfo, ServerWebExchange exchange) {
+        //请求一旦发过来，所有的请求数据是固定的，不能进行任何的数据修改，只能能读取
+        ServerHttpRequest.Builder newReqbuilder = exchange.getRequest().mutate();
+        if (userInfo != null) {
+            //用户登录了
+            newReqbuilder.header(SysRedisConst.USERID_HEADER, userInfo.getId().toString());
         }
-        return exchange;
+        //用户没登录,看是否有临时的tempID
+        String userTempId = getUserTempId(exchange);
+        newReqbuilder.header(SysRedisConst.USERTEMPID_HEADER,userTempId);
+        //放行的时候改掉exchange
+        ServerWebExchange webExchange = exchange.mutate().request(newReqbuilder.build()).response(exchange.getResponse()).build();
+        return webExchange;
+    }
+
+    /**
+     * 获取临时id
+     * @param exchange
+     * @return
+     */
+    private String getUserTempId(ServerWebExchange exchange) {
+        ServerHttpRequest request = exchange.getRequest();
+        //1.尝试从请求头中得临时id
+        String tempId = request.getHeaders().getFirst("userTempId");
+        //2.如果头中没有，尝试获取cookie中得值
+        if(!StringUtils.isEmpty(tempId)){
+            HttpCookie httpCookie = request.getCookies().getFirst("userTempId");
+            if (httpCookie != null){
+                tempId = httpCookie.getValue();
+            }
+        }
+        return tempId;
     }
 
     /**
