@@ -93,7 +93,7 @@ public class GlobalAuthFilter implements GlobalFilter {
         //5.普通请求：如果携带了token就进行id透传，和临时id透传
         String tokenValue = getTokenValue(exchange);
         UserInfo userInfo = getTokenUserInfo(tokenValue);
-        if (!StringUtils.isEmpty(tokenValue) && userInfo != null){
+        if (!StringUtils.isEmpty(tokenValue) && userInfo == null){
             //假请求直接打回登录页
             return redirectToCustomPage(urlProperties.getLoginPage()+"?originUrl="+uri,exchange);
         }
@@ -152,7 +152,7 @@ public class GlobalAuthFilter implements GlobalFilter {
         //1.尝试从请求头中得临时id
         String tempId = request.getHeaders().getFirst("userTempId");
         //2.如果头中没有，尝试获取cookie中得值
-        if(!StringUtils.isEmpty(tempId)){
+        if(StringUtils.isEmpty(tempId)){
             HttpCookie httpCookie = request.getCookies().getFirst("userTempId");
             if (httpCookie != null){
                 tempId = httpCookie.getValue();

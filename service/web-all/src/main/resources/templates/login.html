@@ -124,6 +124,7 @@
 						//	response.data.data  data看做一个map 相当于 Result.ok(data);
 						//	response.data.map.token 相当于 result.ok(map)
 						//	map 中有token 同时还有 nickName
+                        console.log("登录完成：",response.data.data)
                         auth.setToken(response.data.data.token)
 						//	response.data.data 相当于返回来的map
 						//	JSON.stringify(response.data.data) 将map 数据变为json对象，存储到cookie 中

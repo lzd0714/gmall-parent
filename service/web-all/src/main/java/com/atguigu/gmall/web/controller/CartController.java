@@ -25,10 +25,34 @@ public class CartController {
                               Model model){
 
         Result<SkuInfo> result = cartFeignClient.addToCart(skuId, skuNum);
-        model.addAttribute("skuInfo",result.getData());
-        model.addAttribute("skuNum",skuNum);
+        if (result.isOk()) {
+            model.addAttribute("skuInfo",result.getData());
+            model.addAttribute("skuNum",skuNum);
+            return "cart/addCart";
+        }else {
+            String message = result.getMessage();
+            model.addAttribute("msg",result.getData());
+            return "cart/error";
+        }
 
-        return "cart/addCart";
+    }
+    ///cart.html
+    @GetMapping("/cart.html")
+    public String cartHtml(){
+        return "cart/index";
 
+    }
+    /**
+     * 删除购物车中选中商品
+     */
+    @GetMapping("/cart/deleteChecked")
+    public String deleteChecked(){
+
+        /**
+         * redirect: 重定向
+         * forward: 转发
+         */
+        cartFeignClient.deleteChecked();
+        return "redirect:http://cart.gmall.com/cart.html";
     }
 }

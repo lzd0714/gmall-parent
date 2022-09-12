@@ -27,7 +27,6 @@ public class UserController {
     @PostMapping("/passport/login")
     public Result login(@RequestBody UserInfo info){
 
-
         LoginSuccessVo vo = userInfoService.login(info);
         if(vo != null){
             return Result.ok(vo);
