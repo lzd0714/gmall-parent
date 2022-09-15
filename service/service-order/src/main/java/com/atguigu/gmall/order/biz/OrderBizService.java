@@ -9,6 +9,7 @@ import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
  * @create: 2022-09-13 20:03
  **/
 public interface OrderBizService {
+
     /**
      * 获取订单确认页需要的数据
      * @return
@@ -33,5 +34,12 @@ public interface OrderBizService {
      * @param submitVo
      * @return
      */
-    Long submitOrder(OrderSubmitVo submitVo, String tradeNo);
+    Long submitOrder(OrderSubmitVo submitVo,String tradeNo);
+
+    /**
+     * 关闭订单
+     * @param orderId
+     * @param userId
+     */
+    void closeOrder(Long orderId, Long userId);
 }

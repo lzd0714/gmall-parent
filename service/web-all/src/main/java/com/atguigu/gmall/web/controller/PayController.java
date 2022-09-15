@@ -26,7 +26,7 @@ public class PayController {
      * orderId=776479833227001856
      * @return
      */
-/*    @GetMapping("/pay.html")
+    @GetMapping("/pay.html")
     public String payPage(Model model,
                           @RequestParam("orderId") Long orderId){
 
@@ -41,6 +41,7 @@ public class PayController {
         }
 
         return "payment/error";
+//        return "payment/pay";
 
-    }*/
+    }
 }
