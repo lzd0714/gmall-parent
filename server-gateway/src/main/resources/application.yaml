@@ -53,7 +53,8 @@ app:
       - /api/user/passport/login
 
     login-auth-url: #登录以后才能访问的资源
-      - /order/**
+      - /api/**/auth/**
+      - /trade.html
     deny-url:
       - /api/inner/**
 

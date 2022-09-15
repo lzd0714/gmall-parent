@@ -20,11 +20,7 @@ import java.util.List;
 @FeignClient("service-product")
 //service-product：当前客户端的名字，也是这个feign要发起远程调用时找的微服务的名字
 public interface CategoryFeignClient {
-    /**
-     *1、 给 service-product 发送一个 GET方式的请求 路径是 /api/inner/rpc/product/category/tree
-     *2、 拿到远程的响应 json 结果后转成 Result类型的对象，并且 返回的数据是 List<CategoryTreeTo>
-     * @return
-     */
+
 //    @GetMapping("/api/inner/rpc/product/category/tree")
 //    Result<List<CategoryTreeTo>> getCategoryTree();
 

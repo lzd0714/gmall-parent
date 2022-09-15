@@ -25,9 +25,6 @@ public class FeignInterceptorConfiguration {
 
         return (template)-> {
             //修改请求模板
-            System.out.println("哈哈");
-            //随时调用，获取老请求。
-            //
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
             String userId = request.getHeader(SysRedisConst.USERID_HEADER);
