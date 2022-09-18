@@ -41,7 +41,16 @@ public class PayController {
         }
 
         return "payment/error";
-//        return "payment/pay";
 
+    }
+
+    /**
+     * 去支付成功页
+     * @return
+     */
+    @GetMapping("/pay/success.html")
+    public String paySuccessPage(){
+
+        return "payment/success";
     }
 }

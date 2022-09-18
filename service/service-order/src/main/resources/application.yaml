@@ -26,3 +26,7 @@ spring:
 #        batch-size: 12
 app:
   ware-url: http://localhost:9001/
+#开启兜底方法的起作用
+feign:
+  sentinel:
+    enabled: true
