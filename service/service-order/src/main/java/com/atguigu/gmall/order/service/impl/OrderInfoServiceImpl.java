@@ -11,6 +11,7 @@ import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.to.mq.OrderMsg;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.order.service.OrderDetailService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.mapper.OrderInfoMapper;
@@ -187,6 +188,23 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         info.setOperateTime(new Date());
 
 
+        return info;
+    }
+    @Override
+    public OrderInfo getOrderInfoByOutTradeNoAndUserId(String outTradeNo, Long userId) {
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<OrderInfo>()
+                .eq(OrderInfo::getUserId, userId)
+                .eq(OrderInfo::getOutTradeNo, outTradeNo);
+        OrderInfo info = orderInfoMapper.selectOne(wrapper);
+        return info;
+    }
+
+    @Override
+    public OrderInfo getOrderInfoByOrderIdAndUserId(Long orderId, Long userId) {
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<OrderInfo>()
+                .eq(OrderInfo::getUserId, userId)
+                .eq(OrderInfo::getId, orderId);
+        OrderInfo info = orderInfoMapper.selectOne(wrapper);
         return info;
     }
 }
