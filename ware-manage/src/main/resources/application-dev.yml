@@ -21,7 +21,7 @@ spring:
     port: 5672
     username: admin
     password: admin
-#    publisher-confirms: true
+    publisher-confirms: true
     publisher-returns: true
     listener:
       simple:
